@@ -1,17 +1,21 @@
-# Ignore node and build artifacts
-node_modules/
-*.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
+# Node
+node_modules
+dist
 
-# Ignore IDE/editor folders
-.vscode/
-.idea/
+# Java
+target
+*.class
+*.jar
+
+# IntelliJ
+.idea
+*.iml
+
+# VS Code
+.vscode
+
+# OS
 .DS_Store
 
-# Ignore generated frontend/dist files
-hospital-frontend/dist/
-
-# Ignore generated backend build files
-hospitalbackend/target/
+# Env
+.env
