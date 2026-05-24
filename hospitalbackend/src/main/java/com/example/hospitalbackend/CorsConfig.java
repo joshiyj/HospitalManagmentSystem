@@ -1,4 +1,5 @@
 // CorsConfig.java — REPLACE entire file
+
 package com.example.hospitalbackend;
 
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("*")
+                        .allowedOrigins("https://hospital-frontend-theta-silk.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
             }
