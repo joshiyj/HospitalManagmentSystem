@@ -8,62 +8,87 @@ const links = [
   { to: "/admissions", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",              label: "Admissions" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   return (
-    <aside className="fixed top-0 left-0 h-screen w-60 bg-white border-r border-[#E8E6DF] flex flex-col z-50">
+    <>
+      {/* Mobile Sidebar Backdrop */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-[#111827]/10 backdrop-blur-[1px] z-45 transition-opacity"
+          onClick={onClose}
+        />
+      )}
 
-      {/* Logo */}
-      <div className="px-5 py-6 border-b border-[#E8E6DF]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-[#0D6E63] flex items-center justify-center">
-            <span className="text-white font-bold text-xs tracking-wide">M</span>
+      {/* Sidebar Aside Panel */}
+      <aside 
+        className={`fixed top-0 left-0 h-screen w-60 bg-white border-r border-[#E8E6DF] flex flex-col z-50 transition-transform duration-250 ease-in-out md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* Logo */}
+        <div className="px-5 py-6 border-b border-[#E8E6DF] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#0D6E63] flex items-center justify-center">
+              <span className="text-white font-bold text-xs tracking-wide">M</span>
+            </div>
+            <div>
+              <p className="text-[#111827] font-semibold text-sm">MediCore</p>
+              <p className="text-[#9CA3AF] text-[11px]">Hospital Management</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[#111827] font-semibold text-sm">MediCore</p>
-            <p className="text-[#9CA3AF] text-[11px]">Hospital Management</p>
-          </div>
-        </div>
-      </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
-        {links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            end={link.to === "/"}
-            className={({ isActive }) =>
-              `flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                isActive
-                  ? "bg-[#F0FAF9] text-[#0D6E63]"
-                  : "text-[#6B7280] hover:text-[#111827] hover:bg-[#F4F3EE]"
-              }`
-            }
+          {/* Close button for mobile screen */}
+          <button 
+            onClick={onClose}
+            className="md:hidden p-1.5 rounded-lg hover:bg-[#F4F3EE] text-[#9CA3AF] hover:text-[#111827] transition"
           >
-            {({ isActive }) => (
-              <>
-                <svg
-                  className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-[#0D6E63]" : "text-[#9CA3AF]"}`}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d={link.icon} />
-                </svg>
-                {link.label}
-              </>
-            )}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* Footer */}
-      <div className="px-5 py-4 border-t border-[#E8E6DF]">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-[#F4F3EE] border border-[#E8E6DF] flex items-center justify-center">
-            <span className="text-[9px] text-[#9CA3AF] font-medium">v1</span>
-          </div>
-          <p className="text-[#9CA3AF] text-[11px]">Training Project · 2026</p>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-      </div>
-    </aside>
+
+        {/* Nav Links */}
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === "/"}
+              onClick={onClose} // Auto-closes mobile drawer on link click
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  isActive
+                    ? "bg-[#F0FAF9] text-[#0D6E63]"
+                    : "text-[#6B7280] hover:text-[#111827] hover:bg-[#F4F3EE]"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <svg
+                    className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-[#0D6E63]" : "text-[#9CA3AF]"}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d={link.icon} />
+                  </svg>
+                  {link.label}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-5 py-4 border-t border-[#E8E6DF]">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-[#F4F3EE] border border-[#E8E6DF] flex items-center justify-center">
+              <span className="text-[9px] text-[#9CA3AF] font-medium">v1</span>
+            </div>
+            <p className="text-[#9CA3AF] text-[11px]">Training Project · 2026</p>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }

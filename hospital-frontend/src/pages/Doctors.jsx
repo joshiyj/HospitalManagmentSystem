@@ -57,19 +57,19 @@ export default function Doctors() {
 
       <div className="bg-white border border-[#E8E6DF] rounded-2xl p-5 mb-4">
         <p className="text-[#111827] text-sm font-medium mb-4">Add Doctor</p>
-        <div className="flex gap-2 flex-wrap items-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
           <input type="text" placeholder="Doctor Name"
             value={form.doctorName}
             onChange={(e) => setForm({ ...form, doctorName: e.target.value })}
-            className="border border-[#E8E6DF] bg-[#FAFAF7] text-[#111827] placeholder-[#C4C2BB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0D6E63] focus:ring-1 focus:ring-[#0D6E63]/20 transition flex-1 min-w-40"
+            className="border border-[#E8E6DF] bg-[#FAFAF7] text-[#111827] placeholder-[#C4C2BB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0D6E63] focus:ring-1 focus:ring-[#0D6E63]/20 transition flex-1"
           />
           <input type="text" placeholder="Specialization"
             value={form.specialization}
             onChange={(e) => setForm({ ...form, specialization: e.target.value })}
-            className="border border-[#E8E6DF] bg-[#FAFAF7] text-[#111827] placeholder-[#C4C2BB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0D6E63] focus:ring-1 focus:ring-[#0D6E63]/20 transition flex-1 min-w-40"
+            className="border border-[#E8E6DF] bg-[#FAFAF7] text-[#111827] placeholder-[#C4C2BB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0D6E63] focus:ring-1 focus:ring-[#0D6E63]/20 transition flex-1"
           />
           <button onClick={handleAdd}
-            className="bg-[#0D6E63] hover:bg-[#0A5C53] text-white text-sm font-medium px-5 py-2 rounded-lg transition">
+            className="bg-[#0D6E63] hover:bg-[#0A5C53] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition w-full sm:w-auto">
             Add Doctor
           </button>
         </div>
@@ -83,37 +83,39 @@ export default function Doctors() {
           <p className="text-[#111827] text-sm font-medium">All Doctors</p>
           <span className="text-xs text-[#9CA3AF] bg-[#F4F3EE] px-2.5 py-1 rounded-full">{doctors.length} records</span>
         </div>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-[#E8E6DF] bg-[#FAFAF7]">
-              <th className="text-left px-5 py-3 text-[#9CA3AF] text-xs font-medium uppercase tracking-wider">Name</th>
-              <th className="text-left px-5 py-3 text-[#9CA3AF] text-xs font-medium uppercase tracking-wider">Specialization</th>
-              <th className="text-right px-5 py-3 text-[#9CA3AF] text-xs font-medium uppercase tracking-wider">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doctors.length === 0 && (
-              <tr><td colSpan={3} className="text-center text-[#C4C2BB] py-12 text-sm">No doctors found</td></tr>
-            )}
-            {doctors.map((d, i) => (
-              <tr key={d.doctorName}
-                className={`border-b border-[#F4F3EE] hover:bg-[#FAFAF7] transition ${i === doctors.length - 1 ? "border-0" : ""}`}>
-                <td className="px-5 py-3.5 text-[#111827] font-medium">{d.doctorName}</td>
-                <td className="px-5 py-3.5">
-                  <span className="text-xs font-medium bg-[#F5F3FF] text-[#7C3AED] border border-[#DDD6FE] px-2.5 py-1 rounded-full">
-                    {d.specialization}
-                  </span>
-                </td>
-                <td className="px-5 py-3.5 text-right">
-                  <button onClick={() => handleDelete(d.doctorName)}
-                    className="text-xs text-[#DC2626] hover:text-white hover:bg-[#DC2626] border border-[#FCA5A5] hover:border-[#DC2626] px-3 py-1.5 rounded-lg transition">
-                    Remove
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[500px]">
+            <thead>
+              <tr className="border-b border-[#E8E6DF] bg-[#FAFAF7]">
+                <th className="text-left px-5 py-3 text-[#9CA3AF] text-xs font-medium uppercase tracking-wider">Name</th>
+                <th className="text-left px-5 py-3 text-[#9CA3AF] text-xs font-medium uppercase tracking-wider">Specialization</th>
+                <th className="text-right px-5 py-3 text-[#9CA3AF] text-xs font-medium uppercase tracking-wider">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {doctors.length === 0 && (
+                <tr><td colSpan={3} className="text-center text-[#C4C2BB] py-12 text-sm">No doctors found</td></tr>
+              )}
+              {doctors.map((d, i) => (
+                <tr key={d.doctorName}
+                  className={`border-b border-[#F4F3EE] hover:bg-[#FAFAF7] transition ${i === doctors.length - 1 ? "border-0" : ""}`}>
+                  <td className="px-5 py-3.5 text-[#111827] font-medium">{d.doctorName}</td>
+                  <td className="px-5 py-3.5">
+                    <span className="text-xs font-medium bg-[#F5F3FF] text-[#7C3AED] border border-[#DDD6FE] px-2.5 py-1 rounded-full">
+                      {d.specialization}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5 text-right">
+                    <button onClick={() => handleDelete(d.doctorName)}
+                      className="text-xs text-[#DC2626] hover:text-white hover:bg-[#DC2626] border border-[#FCA5A5] hover:border-[#DC2626] px-3 py-1.5 rounded-lg transition">
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Premium Overlay Loader for Actions */}

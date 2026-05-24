@@ -35,7 +35,7 @@ export default function Dashboard() {
         <p className="text-[#9CA3AF] text-sm mt-1">Hospital overview at a glance</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Patients"   value={stats.patients}   icon={ICONS.patients}   accent="#0D6E63" />
         <StatCard label="Doctors"    value={stats.doctors}    icon={ICONS.doctors}    accent="#7C3AED" />
         <StatCard label="Wards"      value={stats.wards}      icon={ICONS.wards}      accent="#D97706" />
