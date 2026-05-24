@@ -10,6 +10,7 @@ export default function Admissions() {
   const [form, setForm] = useState({ wardNo: "", patientId: "", doctorName: "" });
   const [msg, setMsg] = useState({ text: "", ok: true });
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const loadAdmissions = () => API.get("/admissions").then((r) => setAdmissions(r.data));
   const loadFreeWards = () => API.get("/wards").then((r) => setWards(r.data.filter((w) => !w.occupied)));
@@ -27,22 +28,32 @@ export default function Admissions() {
 
   const handleAdmit = async () => {
     if (!form.wardNo || !form.patientId || !form.doctorName) return;
+    setActionLoading(true);
     try {
       const res = await API.post(
         `/admissions/admit?wardNo=${form.wardNo}&patientId=${form.patientId}&doctorName=${encodeURIComponent(form.doctorName)}`
       );
       notify(res.data);
       setForm({ wardNo: "", patientId: "", doctorName: "" });
-      loadAdmissions();
-      loadFreeWards();
-    } catch { notify("Error admitting patient.", false); }
+      await Promise.all([loadAdmissions(), loadFreeWards()]);
+    } catch { 
+      notify("Error admitting patient.", false); 
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleDischarge = async (id) => {
-    const res = await API.put(`/admissions/discharge/${id}`);
-    notify(res.data);
-    loadAdmissions();
-    loadFreeWards();
+    setActionLoading(true);
+    try {
+      const res = await API.put(`/admissions/discharge/${id}`);
+      notify(res.data);
+      await Promise.all([loadAdmissions(), loadFreeWards()]);
+    } catch {
+      notify("Error discharging patient.", false);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const selectClass = "border border-[#E8E6DF] bg-[#FAFAF7] text-[#111827] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#0D6E63] focus:ring-1 focus:ring-[#0D6E63]/20 transition";
@@ -55,6 +66,7 @@ export default function Admissions() {
         <h1 className="text-[#111827] text-xl font-semibold">Admissions</h1>
         <p className="text-[#9CA3AF] text-sm mt-1">Admit patients and manage discharges</p>
       </div>
+
       {/* Admit Form */}
       <div className="bg-white border border-[#E8E6DF] rounded-2xl p-5 mb-4">
         <p className="text-[#111827] text-sm font-medium mb-4">Admit Patient</p>
@@ -75,6 +87,7 @@ export default function Admissions() {
         </div>
         {msg.text && <p className={`text-xs mt-3 ${msg.ok ? "text-[#0D6E63]" : "text-red-500"}`}>{msg.text}</p>}
       </div>
+
       {/* Table */}
       <div className="bg-white border border-[#E8E6DF] rounded-2xl overflow-hidden">
         <div className="px-5 py-4 border-b border-[#E8E6DF] flex items-center justify-between">
@@ -119,6 +132,16 @@ export default function Admissions() {
           </tbody>
         </table>
       </div>
+
+      {/* Premium Overlay Loader for Actions */}
+      {actionLoading && (
+        <div className="fixed inset-0 bg-[#F4F3EE]/40 backdrop-blur-[1px] flex items-center justify-center z-50">
+          <div className="bg-white border border-[#E8E6DF] rounded-2xl p-6 shadow-xl flex flex-col items-center gap-3 max-w-xs">
+            <div className="spinner"></div>
+            <p className="text-sm font-medium text-[#111827]">Updating database...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

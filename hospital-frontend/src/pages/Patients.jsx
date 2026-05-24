@@ -7,6 +7,7 @@ export default function Patients() {
   const [form, setForm]         = useState({ patientId: "", patientName: "" });
   const [msg, setMsg]           = useState({ text: "", ok: true });
   const [loading, setLoading]   = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const load = () => API.get("/patients").then((r) => setPatients(r.data));
   useEffect(() => { load().finally(() => setLoading(false)); }, []);
@@ -15,18 +16,30 @@ export default function Patients() {
 
   const handleAdd = async () => {
     if (!form.patientId || !form.patientName) return;
+    setActionLoading(true);
     try {
       await API.post("/patients", { patientId: parseInt(form.patientId), patientName: form.patientName });
       setForm({ patientId: "", patientName: "" });
       notify("Patient added successfully.");
-      load();
-    } catch { notify("Error adding patient.", false); }
+      await load();
+    } catch { 
+      notify("Error adding patient.", false); 
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleDelete = async (id) => {
-    await API.delete(`/patients/${id}`);
-    notify("Patient removed.");
-    load();
+    setActionLoading(true);
+    try {
+      await API.delete(`/patients/${id}`);
+      notify("Patient removed.");
+      await load();
+    } catch {
+      notify("Error removing patient.", false);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   if (loading) return <Spinner label="Loading patients..." />;
@@ -100,6 +113,16 @@ export default function Patients() {
           </tbody>
         </table>
       </div>
+
+      {/* Premium Overlay Loader for Actions */}
+      {actionLoading && (
+        <div className="fixed inset-0 bg-[#F4F3EE]/40 backdrop-blur-[1px] flex items-center justify-center z-50">
+          <div className="bg-white border border-[#E8E6DF] rounded-2xl p-6 shadow-xl flex flex-col items-center gap-3 max-w-xs">
+            <div className="spinner"></div>
+            <p className="text-sm font-medium text-[#111827]">Updating database...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

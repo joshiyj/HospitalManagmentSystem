@@ -11,6 +11,7 @@ export default function Doctors() {
   const [form, setForm]       = useState({ doctorName: "", specialization: "" });
   const [msg, setMsg]         = useState({ text: "", ok: true });
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const load = () => API.get("/doctors").then((r) => setDoctors(r.data));
   useEffect(() => { load().finally(() => setLoading(false)); }, []);
@@ -19,18 +20,30 @@ export default function Doctors() {
 
   const handleAdd = async () => {
     if (!form.doctorName || !form.specialization) return;
+    setActionLoading(true);
     try {
       await API.post("/doctors", form);
       setForm({ doctorName: "", specialization: "" });
       notify("Doctor added successfully.");
-      load();
-    } catch { notify("Error adding doctor.", false); }
+      await load();
+    } catch { 
+      notify("Error adding doctor.", false); 
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleDelete = async (name) => {
-    await API.delete(`/doctors/${name}`);
-    notify("Doctor removed.");
-    load();
+    setActionLoading(true);
+    try {
+      await API.delete(`/doctors/${name}`);
+      notify("Doctor removed.");
+      await load();
+    } catch {
+      notify("Error removing doctor.", false);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   if (loading) return <Spinner label="Loading doctors..." />;
@@ -102,6 +115,16 @@ export default function Doctors() {
           </tbody>
         </table>
       </div>
+
+      {/* Premium Overlay Loader for Actions */}
+      {actionLoading && (
+        <div className="fixed inset-0 bg-[#F4F3EE]/40 backdrop-blur-[1px] flex items-center justify-center z-50">
+          <div className="bg-white border border-[#E8E6DF] rounded-2xl p-6 shadow-xl flex flex-col items-center gap-3 max-w-xs">
+            <div className="spinner"></div>
+            <p className="text-sm font-medium text-[#111827]">Updating database...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
