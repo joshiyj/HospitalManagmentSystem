@@ -1,9 +1,7 @@
-// src/api/axios.js — CREATE NEW FILE
-
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "https://hospital-backend-mhks.onrender.com",
 });
 
 export default API;
