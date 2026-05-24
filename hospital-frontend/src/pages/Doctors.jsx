@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import Spinner from "../components/Spinner";
 
 const SPEC_COLORS = {
   default: { bg: "#F5F3FF", text: "#7C3AED", border: "#DDD6FE" }
@@ -9,9 +10,10 @@ export default function Doctors() {
   const [doctors, setDoctors] = useState([]);
   const [form, setForm]       = useState({ doctorName: "", specialization: "" });
   const [msg, setMsg]         = useState({ text: "", ok: true });
+  const [loading, setLoading] = useState(true);
 
   const load = () => API.get("/doctors").then((r) => setDoctors(r.data));
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load().finally(() => setLoading(false)); }, []);
 
   const notify = (text, ok = true) => { setMsg({ text, ok }); setTimeout(() => setMsg({ text: "" }), 3000); };
 
@@ -30,6 +32,8 @@ export default function Doctors() {
     notify("Doctor removed.");
     load();
   };
+
+  if (loading) return <Spinner label="Loading doctors..." />;
 
   return (
     <div className="fade-in">

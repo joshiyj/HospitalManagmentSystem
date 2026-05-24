@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import Spinner from "../components/Spinner";
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
   const [form, setForm]         = useState({ patientId: "", patientName: "" });
   const [msg, setMsg]           = useState({ text: "", ok: true });
+  const [loading, setLoading]   = useState(true);
 
   const load = () => API.get("/patients").then((r) => setPatients(r.data));
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load().finally(() => setLoading(false)); }, []);
 
   const notify = (text, ok = true) => { setMsg({ text, ok }); setTimeout(() => setMsg({ text: "" }), 3000); };
 
@@ -26,6 +28,8 @@ export default function Patients() {
     notify("Patient removed.");
     load();
   };
+
+  if (loading) return <Spinner label="Loading patients..." />;
 
   return (
     <div className="fade-in">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 import StatCard from "../components/StatCard";
+import Spinner from "../components/Spinner";
 
 const ICONS = {
   patients:   "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
@@ -11,6 +12,7 @@ const ICONS = {
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ patients: 0, doctors: 0, wards: 0, admissions: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -21,8 +23,10 @@ export default function Dashboard() {
     ]).then(([p, d, w, a]) =>
       setStats({ patients: p.data.length, doctors: d.data.length,
                  wards: w.data.length, admissions: a.data.length })
-    );
+    ).finally(() => setLoading(false));
   }, []);
+
+  if (loading) return <Spinner label="Loading dashboard..." />;
 
   return (
     <div className="fade-in">
