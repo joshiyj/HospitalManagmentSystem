@@ -1,6 +1,4 @@
-// CorsConfig.java
-// Location: com/example/hospitalbackend/CorsConfig.java — CREATE NEW FILE
-
+// CorsConfig.java — REPLACE entire file
 package com.example.hospitalbackend;
 
 import org.springframework.context.annotation.Bean;
@@ -17,8 +15,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE");
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*");
             }
         };
     }
